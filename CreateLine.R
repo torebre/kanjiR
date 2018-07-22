@@ -2,7 +2,7 @@
 
 
 CreateLine <- function(start.x, start.y, stop.x, stop.y) {
-  if(start.x == stop.y) {
+  if(start.x == stop.x) {
     # Horizontal line
     rows <- abs(stop.y - start.y)
     result <- matrix(nrow = rows, ncol = 2)
@@ -12,7 +12,7 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
     }
     else {
       result[ ,1] <- rep(start.x, rows)
-      result[ ,2] <- start.y:(stop.y - 1)
+      result[ ,2] <- stop.y:(start.y - 1)
     }
     
     return(result)
@@ -24,11 +24,11 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
     result <- matrix(nrow = rows, ncol = 2)
     if(start.x < stop.x) {
       result[ ,1] <- rep(start.y, rows)
-      result[ ,2] <- start.y:(stop.x - 1)
+      result[ ,2] <- start.x:(stop.x - 1)
     }
     else {
       result[ ,1] <- rep(start.y, rows)
-      result[ ,2] <- start.y:(stop.x - 1)
+      result[ ,2] <- stop.x:(start.x - 1)
     }
     
     return(result)
@@ -102,7 +102,7 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
     }
   }
   
-  temp.result <- temp.result[which(!(temp[, 1] %in% NA)), ]
+  temp.result <- temp.result[which(!(temp.result[, 1] %in% NA)), ]
   temp.result[ , 1] <- temp.result[ , 1] - first.translate
   temp.result[ , 2] <- temp.result[ , 2] - second.translate
   
