@@ -24,6 +24,9 @@ for(i in 1:length(kanji)) {
   print(cat("Line:", i, ". x.offset: ", x.offset, ". y.offset: ", y.offset))
   
   lines[[i]] <- CreateLine(x.start, y.start, x.start + x.offset, y.start + y.offset)
+  
+  print(cat("Line: ", i, "Line number: ", unlist(line.data[2]), "Start: ", x.start, y.start, "Stop:", x.start + x.offset, y.start + y.offset))
+  print(lines[[i]])
 }
 
 min.x <- 0
@@ -44,13 +47,18 @@ image.matrix <- matrix(0, nrow = abs(max.x - min.x), ncol = abs(max.y - min.y))
 x.offset <- -min.x
 y.offset <- -min.y
 
+counter <- 1
 
 for(i in 1:length(lines)) {
   current.line <- lines[[i]]
   for(j in 1:dim(current.line)[1]) {
-    image.matrix[current.line[j, 1] + x.offset, current.line[j, 2] + y.offset] <- 1
+    row <- current.line[j, 1] + x.offset
+    row <- dim(image.matrix)[1] - row
+    column <- current.line[j, 2] + y.offset
+    image.matrix[row, column] <- counter
   }
+  # counter <- counter + 1
 }
 
 
-image(image.matrix)
+image(t(image.matrix))

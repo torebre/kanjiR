@@ -1,18 +1,15 @@
-
-
-
 CreateLine <- function(start.x, start.y, stop.x, stop.y) {
   if(start.x == stop.x) {
     # Horizontal line
-    rows <- abs(stop.y - start.y)
+    rows <- abs(stop.y - start.y) + 1
     result <- matrix(nrow = rows, ncol = 2)
     if(start.y < stop.y) {
       result[ ,1] <- rep(start.x, rows)
-      result[ ,2] <- start.y:(stop.y - 1)
+      result[ ,2] <- start.y:stop.y
     }
     else {
       result[ ,1] <- rep(start.x, rows)
-      result[ ,2] <- stop.y:(start.y - 1)
+      result[ ,2] <- stop.y:start.y
     }
     
     return(result)
@@ -20,25 +17,23 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
   
   if(start.y == stop.y) {
     # Vertical line
-    rows <- abs(stop.x - start.x)
+    rows <- abs(stop.x - start.x) + 1
     result <- matrix(nrow = rows, ncol = 2)
     if(start.x < stop.x) {
-      result[ ,1] <- rep(start.y, rows)
-      result[ ,2] <- start.x:(stop.x - 1)
+      result[ ,1] <- start.x:stop.x
+      result[ ,2] <- rep(start.y, rows)
     }
     else {
-      result[ ,1] <- rep(start.y, rows)
-      result[ ,2] <- stop.x:(start.x - 1)
+      result[ ,1] <- stop.x:start.x
+      result[ ,2] <- rep(start.y, rows)
     }
     
     return(result)
   }
   
-  swap <- start.x < start.y
-  
+  swap <- stop.x < start.x
   first.translate <- abs(min(0, min(start.x, stop.x)))
   second.translate <- abs(min(0, min(start.y, stop.y)))
-  
   
   if(swap) {
     start.x.translate <- stop.x + first.translate
@@ -56,7 +51,7 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
   x.delta <- stop.x.translate - start.x.translate
   y.delta <- stop.y.translate - start.y.translate
   delta.error <- abs(y.delta / x.delta)
-  if(y.delta) {
+  if(y.delta < 0) {
     sign.y.delta <- -1
   }
   else {
@@ -77,25 +72,26 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
         for(inc.y in new.y:y) {
           temp.result[counter, 1] <- x
           temp.result[counter, 2] <- inc.y
+          counter <- counter + 1
         }
       }
       else {
         for(inc.y in y:new.y) {
           temp.result[counter, 1] <- x
           temp.result[counter, 2] <- inc.y
+          counter <- counter + 1
         }
       }
     }
     else {
       temp.result[counter, 1] <- x
       temp.result[counter, 2] <- y
-      
+      counter <- counter + 1
     }
-    counter <- counter + 1
+    
     y <- new.y
     
-    error <- delta.error
-    
+    error <- error + delta.error
     while(error >= 0.5) {
       new.y <- new.y + sign.y.delta
       error <- error - 1
