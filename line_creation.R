@@ -49,6 +49,8 @@ y.offset <- -min.y
 
 counter <- 1
 
+palette <- c(rgb(1, 1, 1), rainbow(length(lines)))
+
 for(i in 1:length(lines)) {
   current.line <- lines[[i]]
   for(j in 1:dim(current.line)[1]) {
@@ -57,8 +59,8 @@ for(i in 1:length(lines)) {
     column <- current.line[j, 2] + y.offset
     image.matrix[row, column] <- counter
   }
-  # counter <- counter + 1
+  counter <- counter + 1
 }
 
 
-image(t(image.matrix))
+image(t(image.matrix), col = palette)
