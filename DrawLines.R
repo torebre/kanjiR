@@ -12,9 +12,11 @@ for(i in 1:length(lines)) {
   max.y <- max(max.y, max(lines[[i]][ , 2]))
 }
 
-image.matrix <- matrix(0, nrow = abs(max.x - min.x), ncol = abs(max.y - min.y))
+
 x.offset <- -min.x
 y.offset <- -min.y
+
+image.matrix <- matrix(0, nrow = max.x - min.x + 1, ncol = max.y - min.y + 1)
 
 counter <- 1
 
@@ -23,13 +25,13 @@ palette <- c(rgb(1, 1, 1), rainbow(length(lines)))
 for(i in 1:length(lines)) {
   current.line <- lines[[i]]
   for(j in 1:dim(current.line)[1]) {
-    row <- current.line[j, 1] + x.offset
-    row <- dim(image.matrix)[1] - row
-    column <- current.line[j, 2] + y.offset
+    row <- current.line[j, 1] + x.offset + 1
+    #row <- dim(image.matrix)[1] - row
+    column <- current.line[j, 2] + y.offset + 1
     image.matrix[row, column] <- counter
   }
   counter <- counter + 1
 }
 
-image(t(image.matrix), col = palette)
+image(image.matrix, col = palette)
 }

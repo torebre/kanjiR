@@ -1,6 +1,8 @@
 library(scatterplot3d)
 source('CreateLine.R')
 source('DrawLines.R')
+source('DrawLinePair.R')
+source('GenerateSecondLine.R')
 
 # unicode, relative_length, angle_diff, start_pair_distance, relative_distance
 #file.name <- '/home/student/workspace/testEncodings/position_data_2.csv'
@@ -11,11 +13,14 @@ file.name <- '/home/student/workspace/testEncodings/position_data_3.csv'
 
 number.of.fields =max(count.fields(file.name, sep = ','))
 
-dat <- read.table(file.name, header = FALSE, sep = ",", col.names = paste0("V",seq_len(number.of.fields)), fill = TRUE)
+dat <- read.table(file.name, header = TRUE, 
+                  sep = ",", #col.names = paste0("V",seq_len(number.of.fields)), 
+                  colClasses=rep("numeric", number.of.fields),
+                  fill = TRUE)
 
 position.data.original <- data.matrix(dat)
 
-position.data <- position.data.original[1:50 , ]
+position.data <- position.data.original
 
 
 clusters <- hclust(dist(position.data[, 2:6]))
@@ -44,43 +49,39 @@ cluster.2 <- which(cluster.cut %in% 2)
 cluster.3 <- which(cluster.cut %in% 3)
 cluster.4 <- which(cluster.cut %in% 4)
 
-
 relative.length <- mean(position.data[cluster.1, 2])
 angle.diff <- mean(position.data[cluster.1, 3])
 start.pair.difference <- mean(position.data[cluster.1, 4])
 relative.start.distance <- mean(position.data[cluster.1, 5])
 start.pair.angle.diff <- mean(position.data[cluster.1, 6])
 
-
-line2.length <- 10
-line1.length <- line2.length * relative.length
-line2.angle <- 0
-line1.angle <- angle.diff
-
-line1.start.x <- 0
-line1.start.y <- 0
-
-line1.end.x <- line1.length * cos(angle.diff)
-line1.end.y <- line1.length * sin(angle.diff)
-
-line2.start.x <- start.pair.difference * cos(start.pair.angle.diff)
-line2.start.y <- start.pair.difference * sin(start.pair.angle.diff)
-
-line2.end.x <- line2.start.x + line2.length
-line2.end.y <- line2.start.y
+DrawLinePair(relative.length, angle.diff, start.pair.difference, start.pair.angle.diff)
 
 
-CreateLine(line1.start.x, line1.start.y, line1.end.x, line1.end.y)
+lines <- list()
+for(i in 1:dim(position.data)[1]) {
+  lines[[i]] <- GenerateSecondLine(position.data[i, 2], position.data[i, 3], position.data[i, 4], position.data[i, 6])
+}
 
-lines <- list(c(line1.start.x, line1.start.y), c(line2.start.x, line2.start.y))
 DrawLines(lines)
+GenerateLineHeatMap(lines)
 
+hist(line.matrix)
+truehist(line.matrix, prob = F)
 
 
 mean(position.data[cluster.2, 2])
 mean(position.data[cluster.2, 3])
 mean(position.data[cluster.2, 4])
 mean(position.data[cluster.2, 5])
+
+relative.length.2 <- mean(position.data[cluster.2, 2])
+angle.diff.2 <- mean(position.data[cluster.2, 3])
+start.pair.difference.2 <- mean(position.data[cluster.2, 4])
+relative.start.distance.2 <- mean(position.data[cluster.2, 5])
+start.pair.angle.diff.2 <- mean(position.data[cluster.2, 6])
+
+DrawLinePair(relative.length.2, angle.diff.2, start.pair.difference.2, start.pair.angle.diff.2)
 
 
 mean(position.data[cluster.3, 2])
