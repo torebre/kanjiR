@@ -1,20 +1,15 @@
 source('CreateLine.R')
 
-file.name <- '/home/student/workspace/testEncodings/kanji_data_2.csv'
-dat <- read.table(file.name, header = T, sep = ",")
+file.name <- '/home/student/workspace/testEncodings/kanji_data_full.csv'
+kanji.line.data <- read.table(file.name, header = T, sep = ",")
 
-
-kanji.unicode <- unique(dat[,1])
-
-
-kanji <- which(dat[, 1] %in% kanji.unicode[1])
-
-
+kanji.unicode <- unique(kanji.line.data[,1])
+kanji <- which(kanji.line.data[, 1] %in% kanji.unicode[1])
 
 lines <- list()
 
 for(i in 1:length(kanji)) {
-  line.data <- dat[kanji[i], ]
+  line.data <- kanji.line.data[kanji[i], ]
   
   x.start <- unlist(line.data[5])
   y.start <- unlist(line.data[6])

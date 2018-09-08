@@ -8,7 +8,7 @@ source('GenerateSecondLine.R')
 #file.name <- '/home/student/workspace/testEncodings/position_data_2.csv'
 
 # unicode, relative_length, angle_diff, start_pair_distance, relative_distance, start_pair_angle_diff
-file.name <- '/home/student/workspace/testEncodings/position_data_3.csv'
+file.name <- '/home/student/workspace/testEncodings/position_data_4.csv'
 #dat <- readChar(fileName, file.info(file.name)$size)
 
 number.of.fields =max(count.fields(file.name, sep = ','))
@@ -43,7 +43,6 @@ plot(cluster.cut)
 match(1, cluster.cut)
 
 unique(cluster.cut)
-
 cluster.1 <- which(cluster.cut %in% 1)
 cluster.2 <- which(cluster.cut %in% 2)
 cluster.3 <- which(cluster.cut %in% 3)
