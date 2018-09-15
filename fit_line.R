@@ -51,3 +51,8 @@ best.fit.line <- position.data[best.fits[1], ]
 DrawHighlightedLines(unicode, kanji.line.data, best.fit.line[7:8] + 1)
 
 
+lines.for.unicode <- which(position.data[ , 1] == unicode)
+score.data <- line.scores[lines.for.unicode]
+
+
+DrawIdentifiedLinesInKanji(unicode, kanji.line.data, score.data, position.data)

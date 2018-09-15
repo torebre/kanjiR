@@ -8,7 +8,7 @@ source('GenerateSecondLine.R')
 #file.name <- '/home/student/workspace/testEncodings/position_data_2.csv'
 
 # unicode, relative_length, angle_diff, start_pair_distance, relative_distance, start_pair_angle_diff
-file.name <- '/home/student/workspace/testEncodings/position_data_4.csv'
+file.name <- '/home/student/workspace/testEncodings/position_data_5.csv'
 #dat <- readChar(fileName, file.info(file.name)$size)
 
 number.of.fields =max(count.fields(file.name, sep = ','))

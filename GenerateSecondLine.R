@@ -14,7 +14,7 @@ GenerateSecondLine <- function(relative.length, angle.diff, start.pair.differenc
   line2.start.y <- round(start.pair.difference * sin(start.pair.angle.diff))
   
   line2.end.x <- round(line2.start.x + line2.length * cos(angle.diff))
-  line2.end.y <- round(line2.start.y + line2.length * sin(start.pair.angle.diff))
+  line2.end.y <- round(line2.start.y + line2.length * sin(angle.diff))
   
   CreateLine(line2.start.x, line2.start.y, line2.end.x, line2.end.y)
 }

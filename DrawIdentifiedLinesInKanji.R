@@ -1,6 +1,9 @@
-DrawHighlightedLines <- function(unicode, kanji.data, hightlight.lines) {
+DrawIdentifiedLinesInKanji <- function(unicode, kanji.data, score.data, position.data) {
   kanji <- which(kanji.data[, 1] == unicode)
   lines <- list()
+  
+  lines.for.unicode <- which(position.data[ , 1] == unicode)
+  scores <- line.scores[lines.for.unicode]
   
   for(i in 1:length(kanji)) {
     line.data <-  kanji.data[kanji[i], ]
@@ -26,6 +29,7 @@ DrawHighlightedLines <- function(unicode, kanji.data, hightlight.lines) {
   for(i in 1:length(lines)) {
     min.x <- min(min.x, min(lines[[i]][ , 1]))
     min.y <- min(min.y, min(lines[[i]][ , 2]))
+    min.y <- min(min.y, min(lines[[i]][ , 2]))
     
     max.x <- max(max.x, max(lines[[i]][ , 1]))
     max.y <- max(max.y, max(lines[[i]][ , 2]))
@@ -35,25 +39,25 @@ DrawHighlightedLines <- function(unicode, kanji.data, hightlight.lines) {
   x.offset <- -min.x
   y.offset <- -min.y
   
+  max.score <- max(scores)
   counter <- 1
-  palette <- c(rgb(1, 1, 1), rgb(1, 1, 0), rgb(1, 0, 0))
+  #palette <- c(rgb(1, 1, 1), rgb(1, 1, 0), rgb(1, 0, 0))
+  #palette <- heat.colors(length(unique(scores)))
+  
+  breaks <- seq(0, 1, by=0.01)
+  cols <- colorRampPalette(c("white", "red"))(max.score-1)
   
   for(i in 1:length(lines)) {
     current.line <- lines[[i]]
-    if(i %in% hightlight.lines) {
-      level <- 2
-    }
-    else {
-      level <- 1
-    }
+    level <- scores[i]
     
     for(j in 1:dim(current.line)[1]) {
       row <- current.line[j, 1] + x.offset
       row <- dim(image.matrix)[1] - row
       column <- current.line[j, 2] + y.offset
-      image.matrix[row, column] <- level
+      image.matrix[row, column] <- level / max.score
     }
   }
   
-  image(t(image.matrix), col = palette)
+  image(t(image.matrix), col = cols)
 }
