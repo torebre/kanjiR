@@ -38,5 +38,5 @@ DrawLines <- function(lines,
     counter <- counter + 1
   }
   
-  image(image.matrix, col = palette)
+  image(image.matrix, col = palette, xaxt = 'n', yaxt = 'n', ann= F)
 }
