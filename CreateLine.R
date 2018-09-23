@@ -60,8 +60,9 @@ CreateLine <- function(start.x, start.y, stop.x, stop.y) {
 
   error <- 0
   y <- start.y.translate
-  
   new.y = y
+  
+  # print(paste('start.x', start.x, 'stop.x', stop.x, 'start.y', start.y, 'stop.y', stop.y))
   
   temp.result <- matrix(nrow = 2 * (abs(start.x - stop.x) + abs(start.y - stop.y)), ncol = 2)
   counter <- 1
