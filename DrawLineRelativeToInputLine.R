@@ -17,8 +17,7 @@ DrawLineRelativeToInputLine <- function(input.line, all.lines.in.kanji) {
       to.length <- line2$length
     }
     
-    relative.length <- from.length / to.length<
-    angle.diff <- input.line$angle - line2$angle
+    relative.length <- from.length / to.length
     row.diff <- line2$start_y - input.line$start_y
     column.diff <- line2$start_x - input.line$start_x
     start.pair.distance <-
@@ -32,10 +31,11 @@ DrawLineRelativeToInputLine <- function(input.line, all.lines.in.kanji) {
     start.pair.angle.diff <- atan2(row.diff, column.diff)
     
     second.line <-
-      GenerateSecondLine(relative.length,
+      GenerateSecondLine(input.line$length, 
+                         relative.length,
                          line2$angle - input.line$angle,
                          start.pair.distance,
-                         start.pair.angle.diff - input.line$angle) 
+                         start.pair.angle.diff + input.line$angle)
     lines.draw[[counter]] <- second.line  
     counter <- counter + 1
   }
