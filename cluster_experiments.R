@@ -11,7 +11,7 @@ source('CreateLineMatrix.R')
 # unicode, relative_length, angle_diff, start_pair_distance, relative_distance, start_pair_angle_diff
 file.name <- '/home/student/workspace/testEncodings/position_data_4.csv'
 
-number.of.fields =max(count.fields(file.name, sep = ','))
+number.of.fields <- max(count.fields(file.name, sep = ','))
 
 dat <- read.table(file.name, header = TRUE, 
                   sep = ",",
