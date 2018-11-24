@@ -3,7 +3,7 @@ PointToLine <- function(line.start.row, line.start.column,
                         point.row, point.column) {
   
   t <- -((line.start.row - point.row) * (line.stop.row - line.start.row) + (line.start.column - point.column) * (line.stop.column - line.start.column)) / ((line.stop.row - line.start.row)^2 + (line.stop.column - line.start.column)^2)
-  print(paste("t: ", t))
+  # print(paste("t: ", t))
   
   if(t > 0 && t < 1) {
     return(abs(((line.stop.row - line.start.row) * (line.start.column - point.column)

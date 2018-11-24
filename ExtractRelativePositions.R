@@ -47,6 +47,8 @@ ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(),
       start.pair.second.line.angle <- start.pair.second.line.angle + 2*pi
     }
     
+    # print(paste("Test26", row.diff, column.diff, start.pair.second.line.angle, as.integer(rownames(all.lines.in.kanji[i, ])), input.line$length))
+    
     result[counter, 1] <- abs(row.diff) / input.line$length
     result[counter, 2] <- abs(column.diff) / input.line$length
     result[counter, 3] <- start.pair.second.line.angle
