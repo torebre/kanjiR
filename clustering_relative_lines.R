@@ -3,6 +3,7 @@ library(mclust)
 
 source('DrawHighlightedLines.R')
 source('DrawLineKanji.R')
+source("ExtractClosestLinesToLine.R")
 
 
 mod5 <- densityMclust(lines[ , 1:3])
