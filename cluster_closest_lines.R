@@ -3,8 +3,14 @@ library(mclust)
 
 source('DrawHighlightedLines.R')
 source('DrawLineKanji.R')
+source("ExtractClosestLines.R")
+source("ExtractRelativePositions.R")
+source("ExtractClosestLinesToLine.R")
 
 
+
+file.name <- '/home/student/workspace/testEncodings/kanji_data_full.csv'
+kanji.line.data <- read.table(file.name, header = T, sep = ",")
 kanji.unicodes <- unique(kanji.line.data[ , 1])[1:10]
 
 number.of.rows <- 0
@@ -14,11 +20,6 @@ for(i in 1:length(kanji.unicodes)) {
   
   for(j in 1:line.count) {
     line1.original <- all.lines.in.kanji[j, ]
-    
-    # if(line1.original$length < 10) {
-    #   next
-    # }
-    
     number.of.rows <- number.of.rows + line.count - 1
   }
 }
@@ -50,19 +51,6 @@ for(i in 1:length(kanji.unicodes)) {
 
 
 filtered.lines <- lines[which(!is.na(lines[ , 1])) ,]
-
-
-mod5 <- densityMclust(filtered.lines[ , 1:3])
-summary(mod5)
-plot(mod5, what = "density")
-# plot(mod5, what = "density", type = "level")
-# plot(mod5, what = "density", type = "persp")
-
-
-# top.percentile <- quantile(mod$density, c(0.9))
-# top.percentile.indices <- which(lines > top.percentile, arr.ind = T)
-
-# filtered.matrix <-lines[top.percentile.indices, ]
 filtered.matrix <-filtered.lines[, 1:3]
 
 BIC <- mclustBIC(filtered.matrix[ , 1:3])
@@ -76,8 +64,13 @@ plot(mod1, what = "classification")
 table(mod1$classification)
 
 # Cluster 1
-cluster1.lines <- filtered.lines[mod5$classification, ]
+cluster1.lines <- filtered.lines[mod1$classification == 1, ]
 
+for(i in 1:mod1$G) {
+  cluster.lines <- filtered.lines[mod1$classification == i, ]
+  cluster.draw.lines <- DrawLineRelative(cluster.lines)
+  GenerateLineHeatMap(cluster.draw.lines)  
+}
 
 
 cluster.1.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 6)
@@ -85,10 +78,14 @@ counter <- 1
 for(i in 1:dim(cluster1.lines)[1]) {
   first.line <- cluster1.lines[i, ]
   first.line.kanji <- kanji.line.data[which(kanji.line.data[ , 1] == first.line[6]), ]
-  kanji.first.lines.removed <- first.line.kanji[-c(first.line[4], first.line[5]), ]
   
-  first.line.1 <- first.line.kanji[first.line[4], ]
-  first.line.2 <- first.line.kanji[first.line[5], ]
+  first.kanji.index <- which(first.line.kanji[ , 2] == first.line[7])
+  second.kanji.index <- which(first.line.kanji[ , 2] == first.line[8])
+  
+  kanji.first.lines.removed <- first.line.kanji[-c(first.kanji.index, second.kanji.index ), ]
+  
+  first.line.1 <- first.line.kanji[which(first.line.kanji[ , 2] == first.line[7]), ]
+  first.line.2 <-  first.line.kanji[which(first.line.kanji[ , 2] == first.line[8]), ]
   
   stop.1.x <- first.line.1$start_x + ceiling(first.line.1$length * cos(first.line.1$angle))
   stop.1.y <- first.line.1$start_y + ceiling(first.line.1$length * sin(first.line.1$angle))
@@ -96,12 +93,14 @@ for(i in 1:dim(cluster1.lines)[1]) {
   
   stop.2.x <- first.line.2$start_x  + ceiling(first.line.2$length * cos(first.line.2$angle))
   stop.2.y <- first.line.2$start_y + ceiling(first.line.2$length * sin(first.line.2$angle))
+  
   closest.lines.2 <- ExtractClosestLinesToLine(first.line.2$start_x, first.line.2$start_y, stop.2.x, stop.2.y, 3, kanji.first.lines.removed)[1:3]
   
   closest.lines.indices <- unique(c(closest.lines.1, closest.lines.2))
-  closest.lines <- all.lines.in.kanji[closest.lines.indices, ]
+  closest.lines <- kanji.first.lines.removed[closest.lines.indices, ]
   
   lines.draw.1 <- ExtractRelativePositions(first.line.1, closest.lines, c(), first.line.1$line_number)
+  
   lines.draw.2 <- ExtractRelativePositions(first.line.2, closest.lines, c(), first.line.2$line_number)
 
   for(i in 1:length(closest.lines.indices)) {
