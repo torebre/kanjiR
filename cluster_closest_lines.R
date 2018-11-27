@@ -73,6 +73,9 @@ for(i in 1:mod1$G) {
 }
 
 
+
+
+
 cluster.1.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 6)
 counter <- 1
 for(i in 1:dim(cluster1.lines)[1]) {
