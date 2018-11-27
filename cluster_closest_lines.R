@@ -122,6 +122,8 @@ summary(mod2, parameter = T)
 
 plot(mod2, what = "classification")
 
+mod2$uncertainty
+
 mod2$classification
 table(mod2$classification)
 

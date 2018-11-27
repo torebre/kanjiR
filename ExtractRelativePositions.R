@@ -2,7 +2,6 @@ ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(),
   result <- matrix(nrow = dim(all.lines.in.kanji)[1] - length(skip), ncol = 8)
   counter <- 1
   
-  
   for(i in 1:dim(all.lines.in.kanji)[1]) {
     if(i %in% skip) {
       next
@@ -10,6 +9,7 @@ ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(),
     
     line2 <- all.lines.in.kanji[i, ]
     
+    # If a line has a length less than 1, round it up to 1
     if (round(input.line$length) == 0) {
       from.length <- 1
     } else {
@@ -32,6 +32,8 @@ ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(),
     
     switched.length <- sqrt((input.line$start_x - line2.stop.x)^2 + (input.line$start_y - line2.stop.y)^2)
     
+    # The smallest line is set to be one the is horizontal, and then the 
+    # longer line is drawn relative to it
     if(switched.length < start.pair.distance) {
       start.pair.distance <- switched.length
       start.pair.angle.diff <- pi/2 + atan2(row.diff, column.diff)
