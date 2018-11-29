@@ -50,5 +50,5 @@ DrawHighlightedLines <- function(unicode, kanji.data, hightlight.lines) {
     }
   }
   
-  image(t(image.matrix), col = palette)
+  image(t(image.matrix), col = palette, axes = F)
 }

@@ -6,12 +6,13 @@ source('DrawLineKanji.R')
 source("ExtractClosestLines.R")
 source("ExtractRelativePositions.R")
 source("ExtractClosestLinesToLine.R")
+source('DrawHighlightedLines.R')
 
 
 
 file.name <- '/home/student/workspace/testEncodings/kanji_data_full.csv'
 kanji.line.data <- read.table(file.name, header = T, sep = ",")
-kanji.unicodes <- unique(kanji.line.data[ , 1])[1:10]
+kanji.unicodes <- unique(kanji.line.data[ , 1])
 
 number.of.rows <- 0
 for(i in 1:length(kanji.unicodes)) {
@@ -36,8 +37,13 @@ for(i in 1:length(kanji.unicodes)) {
     closest.lines.in.kanji <- all.lines.in.kanji[closest.lines[j, ], ]
     line1.original <- all.lines.in.kanji[j, ]
     
-    # print(paste("Original line: ", line1.original))
-    # print(closest.lines.in.kanji)
+    if(is.na(closest.lines.in.kanji$unicode)) {
+      print(paste("Line is NA:", closest.lines.in.kanji$unicode))
+      next
+    }
+    
+    print(paste("Original line: ", line1.original))
+    print(closest.lines.in.kanji)
     
     lines.draw <- ExtractRelativePositions(line1.original, closest.lines.in.kanji, c(), 
                                            as.integer(rownames(all.lines.in.kanji[j, ])))
@@ -76,10 +82,15 @@ for(i in 1:mod1$G) {
 
 
 
-cluster.1.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 6)
+cluster.1.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 9)
+
+cluster6.lines <- filtered.lines[mod1$classification == 6, ]
+cluster.6.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 9)
+
 counter <- 1
-for(i in 1:dim(cluster1.lines)[1]) {
-  first.line <- cluster1.lines[i, ]
+for(i in 1:dim(cluster6.lines)[1]) {
+  first.line <- cluster6.lines[i, ]
+  
   first.line.kanji <- kanji.line.data[which(kanji.line.data[ , 1] == first.line[6]), ]
   
   first.kanji.index <- which(first.line.kanji[ , 2] == first.line[7])
@@ -97,30 +108,31 @@ for(i in 1:dim(cluster1.lines)[1]) {
   stop.2.x <- first.line.2$start_x  + ceiling(first.line.2$length * cos(first.line.2$angle))
   stop.2.y <- first.line.2$start_y + ceiling(first.line.2$length * sin(first.line.2$angle))
   
+  # Find the lines closest to the two lines involved
   closest.lines.2 <- ExtractClosestLinesToLine(first.line.2$start_x, first.line.2$start_y, stop.2.x, stop.2.y, 3, kanji.first.lines.removed)[1:3]
   
   closest.lines.indices <- unique(c(closest.lines.1, closest.lines.2))
   closest.lines <- kanji.first.lines.removed[closest.lines.indices, ]
   
+  # TODO Are the lines compared to here rotated correctly?
+  
+  # Examine how the closest lines relate to the first extracted line
   lines.draw.1 <- ExtractRelativePositions(first.line.1, closest.lines, c(), first.line.1$line_number)
   
-  lines.draw.2 <- ExtractRelativePositions(first.line.2, closest.lines, c(), first.line.2$line_number)
-
   for(i in 1:length(closest.lines.indices)) {
-    temp <- c(lines.draw.1[i , 1:3], lines.draw.2[i , 1:3])
-    cluster.1.next.iteration[counter, ] <- temp
+    cluster.6.next.iteration[counter, ] <- c(lines.draw.1[i, ], first.line.2$line_number)
     counter <- counter + 1
   }
-  
 }
 
-cluster1.next.iteration <- cluster.1.next.iteration[which(!is.na(cluster.1.next.iteration[ , 1])), ]
+
+cluster.6.next.iteration <- cluster.6.next.iteration[which(!is.na(cluster.6.next.iteration[ , 1])), ]
 
 
-BIC.2 <- mclustBIC(cluster1.next.iteration)
+BIC.2 <- mclustBIC(cluster.6.next.iteration[ , 1:3])
 plot(BIC.2)
 summary(BIC.2)
-mod2 <- Mclust(cluster1.next.iteration, x = BIC.2)
+mod2 <- Mclust(cluster.6.next.iteration[ , 1:3], x = BIC.2)
 summary(mod2, parameter = T)
 
 plot(mod2, what = "classification")
@@ -129,4 +141,29 @@ mod2$uncertainty
 
 mod2$classification
 table(mod2$classification)
+
+
+
+
+
+
+cluster.1.1 <- cluster.1.next.iteration[which(mod2$classification == 1), ]
+op <- par(mfrow = c(4, 4))
+for(i in 1:16) {
+  DrawHighlightedLines(cluster.1.next.iteration[i, 6], kanji.line.data[which(kanji.line.data == cluster.1.next.iteration[i, 6]) ,], cluster.1.next.iteration[i, 7:9] + 1)
+}
+par(op)
+
+
+
+cluster.1.6 <- cluster.6.next.iteration[which(mod2$classification == 1), ]
+op <- par(mfrow = c(4, 4))
+for(i in 1:16) {
+  DrawHighlightedLines(cluster.6.next.iteration[i, 6], kanji.line.data[which(kanji.line.data == cluster.6.next.iteration[i, 6]) ,], cluster.6.next.iteration[i, 7:9] + 1)
+}
+par(op)
+
+
+
+
 
