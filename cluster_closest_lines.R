@@ -12,7 +12,7 @@ source('DrawHighlightedLines.R')
 
 file.name <- '/home/student/workspace/testEncodings/kanji_data_full.csv'
 kanji.line.data <- read.table(file.name, header = T, sep = ",")
-kanji.unicodes <- unique(kanji.line.data[ , 1])
+kanji.unicodes <- unique(kanji.line.data[ , 1])[1:10]
 
 number.of.rows <- 0
 for(i in 1:length(kanji.unicodes)) {
@@ -85,7 +85,7 @@ for(i in 1:mod1$G) {
 cluster.1.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 9)
 
 cluster6.lines <- filtered.lines[mod1$classification == 6, ]
-cluster.6.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 9)
+cluster.6.next.iteration <- matrix(nrow = 6 * dim(cluster6.lines)[1], ncol = 9)
 
 counter <- 1
 for(i in 1:dim(cluster6.lines)[1]) {
@@ -111,15 +111,15 @@ for(i in 1:dim(cluster6.lines)[1]) {
   # Find the lines closest to the two lines involved
   closest.lines.2 <- ExtractClosestLinesToLine(first.line.2$start_x, first.line.2$start_y, stop.2.x, stop.2.y, 3, kanji.first.lines.removed)[1:3]
   
-  closest.lines.indices <- unique(c(closest.lines.1, closest.lines.2))
-  closest.lines <- kanji.first.lines.removed[closest.lines.indices, ]
+  closest.lines.numbers <- unique(c(closest.lines.1, closest.lines.2))
+  closest.lines <- kanji.first.lines.removed[which(kanji.first.lines.removed[ , 2] %in% closest.lines.numbers), ]
   
   # TODO Are the lines compared to here rotated correctly?
   
   # Examine how the closest lines relate to the first extracted line
   lines.draw.1 <- ExtractRelativePositions(first.line.1, closest.lines, c(), first.line.1$line_number)
   
-  for(i in 1:length(closest.lines.indices)) {
+  for(i in 1:dim(lines.draw.1)[1]) {
     cluster.6.next.iteration[counter, ] <- c(lines.draw.1[i, ], first.line.2$line_number)
     counter <- counter + 1
   }
@@ -151,6 +151,15 @@ cluster.1.1 <- cluster.1.next.iteration[which(mod2$classification == 1), ]
 op <- par(mfrow = c(4, 4))
 for(i in 1:16) {
   DrawHighlightedLines(cluster.1.next.iteration[i, 6], kanji.line.data[which(kanji.line.data == cluster.1.next.iteration[i, 6]) ,], cluster.1.next.iteration[i, 7:9] + 1)
+}
+par(op)
+
+
+
+
+op <- par(mfrow = c(4, 4))
+for(i in 1:16) {
+  DrawHighlightedLines(cluster6.lines[i, 6], kanji.line.data[which(kanji.line.data == cluster6.lines[i, 6]) ,], cluster6.lines[i, 7:9])
 }
 par(op)
 

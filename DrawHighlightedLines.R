@@ -1,4 +1,4 @@
-DrawHighlightedLines <- function(unicode, kanji.data, hightlight.lines) {
+DrawHighlightedLines <- function(unicode, kanji.data, highlight.lines) {
   kanji <- which(kanji.data[, 1] == unicode)
   lines <- list()
   
@@ -31,11 +31,11 @@ DrawHighlightedLines <- function(unicode, kanji.data, hightlight.lines) {
   y.offset <- -min.y
   
   counter <- 1
-  palette <- c(rgb(1, 1, 1), rgb(1, 1, 0), rgb(1, 0, 0))
+  palette <- c(rgb(0, 0, 0), rgb(1, 1, 0), rgb(1, 0, 0))
   
   for(i in 1:length(lines)) {
     current.line <- lines[[i]]
-    if(i %in% hightlight.lines) {
+    if(kanji.data[i, ]$line_number %in% highlight.lines) {
       level <- 2
     }
     else {
