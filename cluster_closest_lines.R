@@ -101,12 +101,12 @@ for(i in 1:dim(cluster6.lines)[1]) {
   first.line.1 <- first.line.kanji[which(first.line.kanji[ , 2] == first.line[7]), ]
   first.line.2 <-  first.line.kanji[which(first.line.kanji[ , 2] == first.line[8]), ]
   
-  stop.1.x <- first.line.1$start_x + ceiling(first.line.1$length * cos(first.line.1$angle))
-  stop.1.y <- first.line.1$start_y + ceiling(first.line.1$length * sin(first.line.1$angle))
+  stop.1.x <- first.line.1$start_x + ceiling(first.line.1$length * sin(first.line.1$angle))
+  stop.1.y <- first.line.1$start_y + ceiling(first.line.1$length * cos(first.line.1$angle))
   closest.lines.1 <- ExtractClosestLinesToLine(first.line.1$start_x, first.line.1$start_y, stop.1.x, stop.1.y, 3, kanji.first.lines.removed)[1:3]
   
-  stop.2.x <- first.line.2$start_x  + ceiling(first.line.2$length * cos(first.line.2$angle))
-  stop.2.y <- first.line.2$start_y + ceiling(first.line.2$length * sin(first.line.2$angle))
+  stop.2.x <- first.line.2$start_x  + ceiling(first.line.2$length * sin(first.line.2$angle))
+  stop.2.y <- first.line.2$start_y + ceiling(first.line.2$length * cos(first.line.2$angle))
   
   # Find the lines closest to the two lines involved
   closest.lines.2 <- ExtractClosestLinesToLine(first.line.2$start_x, first.line.2$start_y, stop.2.x, stop.2.y, 3, kanji.first.lines.removed)[1:3]
@@ -155,14 +155,14 @@ for(i in 1:16) {
 par(op)
 
 
-
-
-op <- par(mfrow = c(4, 4))
-for(i in 1:16) {
-  DrawHighlightedLines(cluster6.lines[i, 6], kanji.line.data[which(kanji.line.data == cluster6.lines[i, 6]) ,], cluster6.lines[i, 7:9])
+for (i in 1:mod1$G) {
+  cluster.lines <- filtered.lines[mod1$classification == i,]
+  op <- par(mfrow = c(4, 4))
+  for (i in 1:16) {
+    DrawHighlightedLines(cluster.lines[i, 6], kanji.line.data[which(kanji.line.data == cluster.lines[i, 6]) , ], cluster.lines[i, 7:8])
+  }
+  par(op)
 }
-par(op)
-
 
 
 cluster.1.6 <- cluster.6.next.iteration[which(mod2$classification == 1), ]
