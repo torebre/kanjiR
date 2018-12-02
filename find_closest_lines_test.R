@@ -13,17 +13,17 @@ DrawLineKanji(unicode.to.use, kanji.test)
 
 
 
-test.line.index <- 5
+test.line.index <- 7
 test.line <- kanji.test[test.line.index, ]
 stop.1.x <- test.line$start_x + ceiling(test.line$length * sin(test.line$angle))
 stop.1.y <- test.line$start_y + ceiling(test.line$length * cos(test.line$angle))
 
 closest.lines <- ExtractClosestLinesToLine(test.line$start_x, test.line$start_y, stop.1.x, stop.1.y, 3, kanji.test[-test.line.index, ])[1:3]
 
-closest.lines.2 <- ExtractClosestLinesToLine2(test.line$start_x, test.line$start_y, stop.1.x, stop.1.y, 3, kanji.test[-test.line.index, ])[1:3]
+closest.lines.2 <- ExtractClosestLinesToLine2(test.line$start_x, test.line$start_y, stop.1.x, stop.1.y, 4, kanji.test[-test.line.index, ])
 
 DrawHighlightedLines(unicode.to.use, kanji.test, c(test.line$line_number))
-DrawHighlightedLines(unicode.to.use, kanji.test, c())
+DrawHighlightedLines(unicode.to.use, kanji.test, c(closest.lines.2))
 
 
 closest.lines.2

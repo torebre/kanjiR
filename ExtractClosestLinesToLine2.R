@@ -53,7 +53,6 @@ ExtractClosestLinesToLine2 <-
       y.offset <- 0
     }
     
-    
     matrix.dim <-
       max(c(x.offset + min.max[3], y.offset + min.max[4])) + 2
     image.matrix <- matrix(nrow = matrix.dim, ncol = matrix.dim)
@@ -67,11 +66,15 @@ ExtractClosestLinesToLine2 <-
       }
     }
     
+    # image(t(image.matrix), title = "Before", axes = F)
+    
     for (i in 1:dim(input.line)[1]) {
       row <- input.line[i , 1] + x.offset - 1
       column <- input.line[i, 2] + y.offset - 1
       image.matrix[row, column] <- 0
     }
+    
+    # image(t(image.matrix), title = "After", axes = F)
     
     closest.lines <- matrix(nrow = number.of.lines.to.include, ncol = 1)
     closest.lines.counter <- 1
@@ -94,10 +97,9 @@ ExtractClosestLinesToLine2 <-
       
       indices.to.examine <- which(image.matrix == counter - 1, arr.ind = T)
       
-      
       for(i in 1:dim(indices.to.examine)[1]) {
         neighbour <-
-          neigh[, (matrix.dim - 1) * indices.to.examine[i , 2] + indices.to.examine[i , 1]]
+          neigh[ , matrix.dim * (indices.to.examine[i , 2] - 1) + indices.to.examine[i , 1]]
       
         # North  
         if (indices.to.examine[i , 1] > 1) {
@@ -106,8 +108,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[1] < 0) {
             image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]] <- counter
-            if(!abs(neighbour[1]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[neighbour[1], 2]
+            if(!kanji.data[-neighbour[1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -123,8 +125,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[2] < 0) {
             image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1] <- counter
-            if(!abs(neighbour[2]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[2])
+            if(!kanji.data[-neighbour[2], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[2], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -140,8 +142,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[3] < 0) {
             image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1] <- counter
-            if(!abs(neighbour[3]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[3])
+            if(!kanji.data[-neighbour[3], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[3], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -157,8 +159,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[4] < 0) {
             image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1] <- counter
-            if(!abs(neighbour[4]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[4])
+            if(!kanji.data[-neighbour[4], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[4], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -174,8 +176,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[5] < 0) {
             image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]] <- counter
-            if(!abs(neighbour[5]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[5])
+            if(!kanji.data[-neighbour[5], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[5], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -191,8 +193,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[6] < 0) {
             image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1] <- counter
-            if(!abs(neighbour[6]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[6])
+            if(!kanji.data[-neighbour[6], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[6], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -208,8 +210,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[7] < 0) {
             image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1] <- counter
-            if(!abs(neighbour[7]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[7])
+            if(!kanji.data[-neighbour[7], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[7], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -225,8 +227,8 @@ ExtractClosestLinesToLine2 <-
           }
           else if(neighbour[8] < 0) {
             image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1] <- counter
-            if(!abs(neighbour[8]) %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- abs(neighbour[8])
+            if(!kanji.data[-neighbour[8], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[8], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
                 break
               }
@@ -234,8 +236,6 @@ ExtractClosestLinesToLine2 <-
             }
           }
         }
-        
-        
         
       }
       
