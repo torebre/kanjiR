@@ -55,7 +55,7 @@ ExtractClosestLinesToLine2 <-
     
     matrix.dim <-
       max(c(x.offset + min.max[3], y.offset + min.max[4])) + 2
-    image.matrix <- matrix(nrow = matrix.dim, ncol = matrix.dim)
+    image.matrix <- matrix(data = NA, nrow = matrix.dim, ncol = matrix.dim)
     
     for (i in 1:length(lines)) {
       current.line <- lines[[i]]
@@ -66,7 +66,7 @@ ExtractClosestLinesToLine2 <-
       }
     }
     
-    # image(t(image.matrix), title = "Before", axes = F)
+    # image(t(image.matrix), main = "Before", axes = F)
     
     for (i in 1:dim(input.line)[1]) {
       row <- input.line[i , 1] + x.offset - 1
@@ -74,195 +74,168 @@ ExtractClosestLinesToLine2 <-
       image.matrix[row, column] <- 0
     }
     
-    # image(t(image.matrix), title = "After", axes = F)
+    # image(t(image.matrix), main = "After", axes = F)
     
     closest.lines <- matrix(nrow = number.of.lines.to.include, ncol = 1)
     closest.lines.counter <- 1
     
     # TODO Find a suitable upper bound for iterations
-    for (counter in 1:10) {
-      mat.pad <- rbind(NA, cbind(NA, image.matrix, NA), NA)
+    for (counter in 1:50) {
+      temp.matrix <- image.matrix
+      indices.to.examine <- which(temp.matrix == counter - 1, arr.ind = T)
       
-      ind <- 2:(matrix.dim + 1) # row/column indices of the "middle"
-      neigh <- rbind(
-        N  = as.vector(mat.pad[ind - 1, ind]),
-        NE = as.vector(mat.pad[ind - 1, ind + 1]),
-        E  = as.vector(mat.pad[ind    , ind + 1]),
-        SE = as.vector(mat.pad[ind + 1, ind + 1]),
-        S  = as.vector(mat.pad[ind + 1, ind]),
-        SW = as.vector(mat.pad[ind + 1, ind - 1]),
-        W  = as.vector(mat.pad[ind    , ind - 1]),
-        NW = as.vector(mat.pad[ind - 1, ind - 1])
-      )
-      
-      indices.to.examine <- which(image.matrix == counter - 1, arr.ind = T)
+      if(length(indices.to.examine) == 0) {
+        # No hits found
+        break
+      }
       
       for(i in 1:dim(indices.to.examine)[1]) {
-        neighbour <-
-          neigh[ , matrix.dim * (indices.to.examine[i , 2] - 1) + indices.to.examine[i , 1]]
-      
         # North  
         if (indices.to.examine[i , 1] > 1) {
-          if(is.na(neighbour[1])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]])) {
             image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]] <- counter  
           }
-          else if(neighbour[1] < 0) {
-            image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]] <- counter
-            if(!kanji.data[-neighbour[1], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[1], 2]
+          else if(temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2]] <- counter
           }
         }
         
         # North-east
         if (indices.to.examine[i , 1] > 1 && indices.to.examine[i , 2] < matrix.dim) {
-          if(is.na(neighbour[2])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1])) {
             image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1] <- counter  
           }
-          else if(neighbour[2] < 0) {
-            image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1] <- counter
-            if(!kanji.data[-neighbour[2], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[2], 2]
+          else if(temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] + 1] <- counter
           }
         }
         
         # East
-        if (indices.to.examine[i , 2] < matrix.dim) {
-          if(is.na(neighbour[3])) {
+        if (indices.to.examine[i, 2] < matrix.dim) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1])) {
             image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1] <- counter  
           }
-          else if(neighbour[3] < 0) {
-            image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1] <- counter
-            if(!kanji.data[-neighbour[3], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[3], 2]
+          else if(temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] + 1] <- counter
           }
         }
         
         # South-east
         if (indices.to.examine[i , 1] < matrix.dim && indices.to.examine[i , 2] < matrix.dim) {
-          if(is.na(neighbour[4])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1])) {
             image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1] <- counter  
           }
-          else if(neighbour[4] < 0) {
-            image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1] <- counter
-            if(!kanji.data[-neighbour[4], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[4], 2]
+          else if(temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] + 1] <- counter
           }
         }
         
         # South
         if (indices.to.examine[i , 1] < matrix.dim) {
-          if(is.na(neighbour[5])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]])) {
             image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]] <- counter  
           }
-          else if(neighbour[5] < 0) {
-            image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]] <- counter
-            if(!kanji.data[-neighbour[5], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[5], 2]
+          else if(temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2]] <- counter
           }
         }
         
         # South-west
         if (indices.to.examine[i , 1] < matrix.dim && indices.to.examine[i, 2] > 1) {
-          if(is.na(neighbour[6])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1])) {
             image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1] <- counter  
           }
-          else if(neighbour[6] < 0) {
-            image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1] <- counter
-            if(!kanji.data[-neighbour[6], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[6], 2]
+          else if(temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1] + 1, indices.to.examine[i , 2] - 1] <- counter
           }
         }
         
         # West
         if (indices.to.examine[i, 2] > 1) {
-          if(is.na(neighbour[7])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1])) {
             image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1] <- counter  
           }
-          else if(neighbour[7] < 0) {
-            image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1] <- counter
-            if(!kanji.data[-neighbour[7], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[7], 2]
+          else if(temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1], indices.to.examine[i , 2] - 1] <- counter
           }
         }
         
         # North-west
         if (indices.to.examine[i, 1] > 1 && indices.to.examine[i, 2] > 1) {
-          if(is.na(neighbour[8])) {
+          if(is.na(temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1])) {
             image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1] <- counter  
           }
-          else if(neighbour[8] < 0) {
-            image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1] <- counter
-            if(!kanji.data[-neighbour[8], 2] %in% closest.lines) {
-              closest.lines[[closest.lines.counter]] <- kanji.data[-neighbour[8], 2]
+          else if(temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1] < 0) {
+            if(!kanji.data[-temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1], 2] %in% closest.lines) {
+              closest.lines[[closest.lines.counter]] <- kanji.data[-temp.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1], 2]
               if(closest.lines.counter >= number.of.lines.to.include) {
-                break
+                return(closest.lines)
               }
               closest.lines.counter <- closest.lines.counter + 1
             }
+            image.matrix[indices.to.examine[i, 1] - 1, indices.to.examine[i , 2] - 1] <- counter
           }
         }
-        
       }
       
-      
-      print("Test23")
-      
-      image.temp <- image.matrix
-      for(i in which(image.temp < 0)) {
-        row <- i %% matrix.dim
-        column <- i %/% matrix.dim
-        
-        # print(paste(row, column))
-        
-        image.temp[row, column] <- -1
-      }
-      
-      # image.temp
-      
-      image(t(image.temp), axes = F)
+      # image.temp <- image.matrix
+      # for(i in which(image.temp < 0)) {
+      #   row <- i %% matrix.dim
+      #   column <- i %/% matrix.dim
+      #   image.temp[row, column + 1] <- -1
+      # }
+      # image(t(image.temp), axes = F)
       
     }
     
-    
-    
-    
-    sapply(closest.lines, function(x) {
-      kanji.data[x, 2]
-    })
-    
+    closest.lines
   }

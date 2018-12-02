@@ -20,7 +20,7 @@ stop.1.y <- test.line$start_y + ceiling(test.line$length * cos(test.line$angle))
 
 closest.lines <- ExtractClosestLinesToLine(test.line$start_x, test.line$start_y, stop.1.x, stop.1.y, 3, kanji.test[-test.line.index, ])[1:3]
 
-closest.lines.2 <- ExtractClosestLinesToLine2(test.line$start_x, test.line$start_y, stop.1.x, stop.1.y, 4, kanji.test[-test.line.index, ])
+closest.lines.2 <- ExtractClosestLinesToLine2(test.line$start_x, test.line$start_y, stop.1.x, stop.1.y, 5, kanji.test[-test.line.index, ])
 
 DrawHighlightedLines(unicode.to.use, kanji.test, c(test.line$line_number))
 DrawHighlightedLines(unicode.to.use, kanji.test, c(closest.lines.2))

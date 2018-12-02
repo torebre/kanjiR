@@ -3,10 +3,12 @@ library(mclust)
 
 source('DrawHighlightedLines.R')
 source('DrawLineKanji.R')
-source("ExtractClosestLines.R")
+source("ExtractClosestLines2.R")
 source("ExtractRelativePositions.R")
-source("ExtractClosestLinesToLine.R")
+source("ExtractClosestLinesToLine2.R")
 source('DrawHighlightedLines.R')
+source("DrawLineRelative.R")
+source("GenerateLineHeatMap.R")
 
 
 
@@ -31,25 +33,32 @@ counter <- 1
 for(i in 1:length(kanji.unicodes)) {
   # Only use lines that have a length greater than 5
   all.lines.in.kanji <- kanji.line.data[which(kanji.line.data[, 1] == kanji.unicodes[i] & kanji.line.data[ , 4] > 5), ]
-  closest.lines <- ExtractClosestLines(kanji.unicodes[i], 3, all.lines.in.kanji)
   
-  for(j in 1:dim(closest.lines)[1]) {
-    closest.lines.in.kanji <- all.lines.in.kanji[closest.lines[j, ], ]
-    line1.original <- all.lines.in.kanji[j, ]
+  for(j in 1:dim(all.lines.in.kanji)[1]) {
+    current.line <- all.lines.in.kanji[j, ]
+    stop.1.x <- current.line$start_x + ceiling(current.line$length * sin(current.line$angle))
+    stop.1.y <- current.line$start_y + ceiling(current.line$length * cos(current.line$angle))
+    closest.lines <- ExtractClosestLinesToLine2(current.line$start_x, current.line$start_y, stop.1.x, stop.1.y, 3, all.lines.in.kanji[-j, ])
     
-    if(is.na(closest.lines.in.kanji$unicode)) {
-      print(paste("Line is NA:", closest.lines.in.kanji$unicode))
-      next
-    }
+    # temp.lines <- ExtractClosestLines2(kanji.unicodes[i], 3, all.lines.in.kanji)
+    closest.lines.in.kanji <- all.lines.in.kanji[which(all.lines.in.kanji[ , 2] %in% closest.lines), ]
     
-    print(paste("Original line: ", line1.original))
-    print(closest.lines.in.kanji)
+    # closest.lines.in.kanji <- all.lines.in.kanji[closest.lines[j, ], ]
+    # line1.original <- all.lines.in.kanji[j, ]
     
-    lines.draw <- ExtractRelativePositions(line1.original, closest.lines.in.kanji, c(), 
+    # if(is.na(closest.lines.in.kanji$unicode)) {
+    #   print(paste("Line is NA:", closest.lines.in.kanji$unicode))
+    #   next
+    # }
+    
+    # print(paste("Original line: ", line1.original))
+    # print(closest.lines.in.kanji)
+    
+    lines.draw <- ExtractRelativePositions(current.line, closest.lines.in.kanji, c(), 
                                            as.integer(rownames(all.lines.in.kanji[j, ])))
     
-    for(j in 1:dim(lines.draw)[1]) {
-      lines[counter, ] <- lines.draw[j, ]
+    for(k in 1:dim(lines.draw)[1]) {
+      lines[counter, ] <- lines.draw[k, ]
       counter <- counter + 1
     }
   }
@@ -109,7 +118,7 @@ for(i in 1:dim(cluster6.lines)[1]) {
   stop.2.y <- first.line.2$start_y + ceiling(first.line.2$length * cos(first.line.2$angle))
   
   # Find the lines closest to the two lines involved
-  closest.lines.2 <- ExtractClosestLinesToLine(first.line.2$start_x, first.line.2$start_y, stop.2.x, stop.2.y, 3, kanji.first.lines.removed)[1:3]
+  closest.lines.2 <- ExtractClosestLinesToLine2(first.line.2$start_x, first.line.2$start_y, stop.2.x, stop.2.y, 3, kanji.first.lines.removed)[1:3]
   
   closest.lines.numbers <- unique(c(closest.lines.1, closest.lines.2))
   closest.lines <- kanji.first.lines.removed[which(kanji.first.lines.removed[ , 2] %in% closest.lines.numbers), ]
