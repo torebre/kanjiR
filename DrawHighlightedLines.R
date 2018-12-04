@@ -1,4 +1,4 @@
-DrawHighlightedLines <- function(unicode, kanji.data, highlight.lines) {
+DrawHighlightedLines <- function(unicode, kanji.data, highlight.lines = c()) {
   kanji <- which(kanji.data[, 1] == unicode)
   lines <- list()
   
