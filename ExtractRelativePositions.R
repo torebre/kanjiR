@@ -1,4 +1,4 @@
-ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(), line.number.input) {
+ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(), line.number.input, use.relative.distance = T) {
   result <- matrix(nrow = dim(all.lines.in.kanji)[1] - length(skip), ncol = 8)
   counter <- 1
   
@@ -49,8 +49,14 @@ ExtractRelativePositions <- function(input.line, all.lines.in.kanji, skip = c(),
       start.pair.second.line.angle <- start.pair.second.line.angle + 2*pi
     }
     
-    # print(paste("Test26", row.diff, column.diff, start.pair.second.line.angle, as.integer(rownames(all.lines.in.kanji[i, ])), input.line$length))
-    
+    if(use.relative.distance) {
+      result[counter, 1] <- abs(row.diff) / input.line$length
+      result[counter, 2] <- abs(column.diff) / input.line$length  
+    }
+    else {
+      result[counter, 1] <- abs(row.diff)
+      result[counter, 2] <- abs(column.diff)
+    }
     result[counter, 1] <- abs(row.diff) / input.line$length
     result[counter, 2] <- abs(column.diff) / input.line$length
     result[counter, 3] <- start.pair.second.line.angle

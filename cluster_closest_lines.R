@@ -30,6 +30,7 @@ for(i in 1:length(kanji.unicodes)) {
 
 lines <- matrix(nrow = number.of.rows, ncol = 8)
 counter <- 1
+number.of.closest.lines.to.include <- 6
 for(i in 1:length(kanji.unicodes)) {
   # Only use lines that have a length greater than 5
   all.lines.in.kanji <- kanji.line.data[which(kanji.line.data[, 1] == kanji.unicodes[i] & kanji.line.data[ , 4] > 5), ]
@@ -46,24 +47,11 @@ for(i in 1:length(kanji.unicodes)) {
     current.line <- all.lines.in.kanji[j, ]
     stop.1.x <- current.line$start_x + ceiling(current.line$length * sin(current.line$angle))
     stop.1.y <- current.line$start_y + ceiling(current.line$length * cos(current.line$angle))
-    closest.lines <- ExtractClosestLinesToLine2(current.line$start_x, current.line$start_y, stop.1.x, stop.1.y, 3, all.lines.in.kanji[-j, ])
+    closest.lines <- ExtractClosestLinesToLine2(current.line$start_x, current.line$start_y, stop.1.x, stop.1.y, number.of.closest.lines.to.include, all.lines.in.kanji[-j, ])
     
-    # temp.lines <- ExtractClosestLines2(kanji.unicodes[i], 3, all.lines.in.kanji)
     closest.lines.in.kanji <- all.lines.in.kanji[which(all.lines.in.kanji[ , 2] %in% closest.lines), ]
-    
-    # closest.lines.in.kanji <- all.lines.in.kanji[closest.lines[j, ], ]
-    # line1.original <- all.lines.in.kanji[j, ]
-    
-    # if(is.na(closest.lines.in.kanji$unicode)) {
-    #   print(paste("Line is NA:", closest.lines.in.kanji$unicode))
-    #   next
-    # }
-    
-    # print(paste("Original line: ", line1.original))
-    # print(closest.lines.in.kanji)
-    
     lines.draw <- ExtractRelativePositions(current.line, closest.lines.in.kanji, c(), 
-                                           as.integer(rownames(all.lines.in.kanji[j, ])))
+                                           as.integer(rownames(all.lines.in.kanji[j, ])), use.relative.distance = F)
     
     for(k in 1:dim(lines.draw)[1]) {
       lines[counter, ] <- lines.draw[k, ]
@@ -75,34 +63,35 @@ for(i in 1:length(kanji.unicodes)) {
 
 filtered.lines <- lines[which(!is.na(lines[ , 1])) ,]
 filtered.matrix <-filtered.lines[, 1:3]
-filtered.matrix.normalized <- apply(filtered.matrix[ , 1:3], 2, function(x) (x- min(x))/(max(x) - min(x)))
+# filtered.matrix.normalized <- apply(filtered.matrix[ , 1:3], 2, function(x) (x- min(x))/(max(x) - min(x)))
 
-BIC <- mclustBIC(filtered.matrix.normalized[ , 1:3])
+BIC <- mclustBIC(filtered.matrix[ , 1:3])
 plot(BIC)
 summary(BIC)
-mod1 <- Mclust(filtered.matrix.normalized, x = BIC)
-summary(mod1, parameter = T)
+clustered.lines.model <- Mclust(filtered.matrix, x = BIC)
+summary(clustered.lines.model, parameter = T)
 
-plot(mod1, what = "classification")
+plot(clustered.lines.model, what = "classification")
 
-table(mod1$classification)
+table(clustered.lines.model$classification)
 
-clust.combi.result <- clustCombi(mod1)
+clust.combi.result <- clustCombi(clustered.lines.model)
 plot(clust.combi.result)
 
-
-# Cluster 1
-cluster1.lines <- filtered.lines[mod1$classification == 1, ]
-
-for(i in 1:mod1$G) {
-  cluster.lines <- filtered.lines[mod1$classification == i, ]
-  cluster.draw.lines <- DrawLineRelative(cluster.lines)
-  GenerateLineHeatMap(cluster.draw.lines)  
+# Generate a heat-map showing the lines in the clusters
+for(i in 1:clustered.lines.model$G) {
+  cluster.lines <- filtered.lines[clustered.lines.model$classification == i, ]
+  # cluster.draw.lines <- DrawLineRelative(cluster.lines)
+  # GenerateLineHeatMap(cluster.draw.lines)
+  
+  cluster.lines.uncertainty <- clustered.lines.model$uncertainty[clustered.lines.model$classification == i]
+  cluster.lines.high.certainty <- cluster.lines[which(cluster.lines.uncertainty < 0.2), ]
+  cluster.temp.lines <- DrawLineRelative(cluster.lines.high.certainty)
+  GenerateLineHeatMap(cluster.temp.lines)
 }
 
-
-
-
+# Cluster 1
+cluster1.lines <- filtered.lines[clustered.lines.model$classification == 1, ]
 
 cluster.1.next.iteration <- matrix(nrow = 6 * dim(cluster1.lines)[1], ncol = 9)
 
@@ -177,11 +166,14 @@ for(i in 1:16) {
 par(op)
 
 
-for (i in 1:mod1$G) {
-  cluster.lines <- filtered.lines[mod1$classification == i,]
+for (i in 1:clustered.lines.model$G) {
+  cluster.lines <- filtered.lines[clustered.lines.model$classification == i,]
+  cluster.lines.uncertainty <- clustered.lines.model$uncertainty[clustered.lines.model$classification == i]
+  cluster.lines.high.certainty <- cluster.lines[which(cluster.lines.uncertainty < 0.2), ]
+  
   op <- par(mfrow = c(4, 4))
-  for (i in 1:16) {
-    DrawHighlightedLines(cluster.lines[i, 6], kanji.line.data[which(kanji.line.data == cluster.lines[i, 6]) , ], cluster.lines[i, 7:8])
+  for (j in 1:16) {
+    DrawHighlightedLines(cluster.lines[j, 6], kanji.line.data[which(kanji.line.data == cluster.lines[j, 6]) , ], cluster.lines[j, 7:8])
   }
   par(op)
 }
