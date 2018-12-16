@@ -30,10 +30,11 @@ for(i in 1:length(kanji.unicodes)) {
 
 lines <- matrix(nrow = number.of.rows, ncol = 8)
 counter <- 1
-number.of.closest.lines.to.include <- 6
+number.of.closest.lines.to.include <- 3
+line.length.cutoff <- 10
 for(i in 1:length(kanji.unicodes)) {
-  # Only use lines that have a length greater than 5
-  all.lines.in.kanji <- kanji.line.data[which(kanji.line.data[, 1] == kanji.unicodes[i] & kanji.line.data[ , 4] > 5), ]
+  # Only use lines that have a length greater than line.length.cutoff
+  all.lines.in.kanji <- kanji.line.data[which(kanji.line.data[, 1] == kanji.unicodes[i] & kanji.line.data[ , 4] > line.length.cutoff), ]
   number.of.lines.in.kanji <- dim(all.lines.in.kanji)[1]
   
   if(number.of.lines.in.kanji < 1) {
@@ -41,13 +42,19 @@ for(i in 1:length(kanji.unicodes)) {
     next
   }
   
-  print(paste("Current unicode:", kanji.unicodes[i]))
+  print(paste("Current unicode:", kanji.unicodes[i], " i: ", i, " Number of kanji: ", length(kanji.unicodes)))
   
   for(j in 1:number.of.lines.in.kanji) {
     current.line <- all.lines.in.kanji[j, ]
+  
     stop.1.x <- current.line$start_x + ceiling(current.line$length * sin(current.line$angle))
     stop.1.y <- current.line$start_y + ceiling(current.line$length * cos(current.line$angle))
     closest.lines <- ExtractClosestLinesToLine2(current.line$start_x, current.line$start_y, stop.1.x, stop.1.y, number.of.closest.lines.to.include, all.lines.in.kanji[-j, ])
+    
+    # TODO Figure out a way of handling this better
+    if(anyNA(closest.lines)) {
+      next
+    }
     
     closest.lines.in.kanji <- all.lines.in.kanji[which(all.lines.in.kanji[ , 2] %in% closest.lines), ]
     lines.draw <- ExtractRelativePositions(current.line, closest.lines.in.kanji, c(), 
