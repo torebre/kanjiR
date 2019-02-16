@@ -32,7 +32,7 @@ lines <- matrix(nrow = number.of.rows, ncol = 8)
 counter <- 1
 number.of.closest.lines.to.include <- 3
 line.length.cutoff <- 10
-for(i in 1:length(kanji.unicodes)) {
+for(i in 1:1000) { #length(kanji.unicodes)) {
   # Only use lines that have a length greater than line.length.cutoff
   all.lines.in.kanji <- kanji.line.data[which(kanji.line.data[, 1] == kanji.unicodes[i] & kanji.line.data[ , 4] > line.length.cutoff), ]
   number.of.lines.in.kanji <- dim(all.lines.in.kanji)[1]
@@ -67,10 +67,18 @@ for(i in 1:length(kanji.unicodes)) {
   }
 }
 
-
 filtered.lines <- lines[which(!is.na(lines[ , 1])) ,]
 filtered.matrix <-filtered.lines[, 1:3]
 # filtered.matrix.normalized <- apply(filtered.matrix[ , 1:3], 2, function(x) (x- min(x))/(max(x) - min(x)))
+
+op <- par(mfrow = c(4, 4))
+for(i in 1:16) {
+  DrawHighlightedLines(filtered.lines[i, 6], kanji.line.data[which(kanji.line.data == filtered.lines[i, 6]) ,], filtered.lines[i, 7:8])
+}
+par(op)
+
+
+
 
 BIC <- mclustBIC(filtered.matrix[ , 1:3])
 plot(BIC)
