@@ -83,3 +83,5 @@ lines.from <- filtered.lines[line.from.numbers, ]
 
 lines.from.short <- filtered.matrix[line.from.numbers, ]
 predict(kernel.density.estimate, x = lines.from.short)
+
+
