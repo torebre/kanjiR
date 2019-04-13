@@ -33,12 +33,25 @@ lines.in.kanji <- filtered.lines[which(filtered.lines[ , 6] == 33897), ]
 
 included.lines <- sort(unique(c(unique(lines.in.kanji[ , 7]), unique(lines.in.kanji[ 8]))))
 
-lookup.vector <- sapply(0:max(included.lines), function(x) {
-  if(x %in% included.lines) {
-    return(x)
-  }
-  return(-1)
-})
+lookup.vector <- matrix(data = -1, nrow = max(included.lines))
 
-lookup.vector[lines.in.kanji[ , 7] + 1]
-lookup.vector[lines.in.kanji[ , 8] + 1]
+lookup.vector[included.lines + 1] <- seq(1:length(included.lines))
+
+# lookup.vector <- lapply(0:max(included.lines), function(counter, x) {
+#   if(x %in% included.lines) {
+#     return(counter)
+#   }
+#   return(-1)
+# }, )
+
+rows.in.adjacency.matrix <- lookup.vector[lines.in.kanji[ , 7] + 1]
+columns.in.adjacency.matrix <- lookup.vector[lines.in.kanji[ , 8] + 1]
+
+adjacency.matrix <- matrix(data = 0, nrow = length(included.lines), ncol = length(included.lines))
+
+adjacency.matrix[(columns.in.adjacency.matrix - 1) * length(included.lines) + rows.in.adjacency.matrix] <- 1
+
+adjacency.matrix[rows.in.adjacency.matrix, columns.in.adjacency.matrix] <- 1
+
+g1 <- graph_from_adjacency_matrix( adjacency.matrix )
+plot(g1)
