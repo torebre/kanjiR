@@ -54,4 +54,19 @@ adjacency.matrix[(columns.in.adjacency.matrix - 1) * length(included.lines) + ro
 adjacency.matrix[rows.in.adjacency.matrix, columns.in.adjacency.matrix] <- 1
 
 g1 <- graph_from_adjacency_matrix( adjacency.matrix )
+
+# Find the same rows in filtered.matrix.kms
+corner.labels <- filtered.matrix.kms$label[which(filtered.lines[ , 6] == 33897)]
+colors <- rainbow(length(unique(corner.labels)))
+
+for(i in 1:length(rows.in.adjacency.matrix)) {
+  edge <- E(g1, c(rows.in.adjacency.matrix[i], columns.in.adjacency.matrix[i]))
+  E(g1, c(rows.in.adjacency.matrix[i], columns.in.adjacency.matrix[i]))$category <- corner.labels[i]
+  E(g1, c(rows.in.adjacency.matrix[i], columns.in.adjacency.matrix[i]))$color <- colors[corner.labels[i]]
+}
+
+edge_attr_names(g1)
+
 plot(g1)
+
+

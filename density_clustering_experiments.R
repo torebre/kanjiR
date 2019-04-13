@@ -1,4 +1,10 @@
 library(MASS)
+library(ks)
+library(colorspace)
+library(RColorBrewer)
+library(rgl)
+library(misc3d)
+library(alphashape3d)
 
 
 predictions <- predict(kernel.density.estimate, x = filtered.matrix)
