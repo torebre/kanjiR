@@ -8,9 +8,17 @@ DrawHighlightedLines(filtered.lines[1, 6], kanji.line.data[which(kanji.line.data
 kanjis.in.set <- unique(filtered.lines[ , 6])
 
 sapply(kanjis.in.set, function(kanji.code) {
-  # Find the same rows in filtered.matrix.kms
+  # Find the same rows in filtered.matrix.kms. The order of the lines is the same in filtered.lines and filtered.matrix.kms$label
   lines.in.kanji <- filtered.lines[which(filtered.lines[ , 6] == kanji.code), ]
   corner.labels <- filtered.matrix.kms$label[which(filtered.lines[ , 6] == kanji.code)]
   
   ExtractAndSaveGraph(kanji.code, lines.in.kanji, corner.labels, paste('/home/student/workspace/kanjiR/kanji_graphs/', kanji.code, '.xml', sep=''))
 })
+
+
+
+
+lines.in.kanji2 <- filtered.lines[which(filtered.lines[ , 6] == 26613), ]
+corner.labels2 <- filtered.matrix.kms$label[which(filtered.lines[ , 6] == 26613)]
+
+ExtractAndSaveGraph(kanji.code, lines.in.kanji2, corner.labels2, paste('/home/student/workspace/kanjiR/test_kanji', kanji.code, '.xml', sep=''))
