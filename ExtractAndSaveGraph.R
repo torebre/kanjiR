@@ -17,6 +17,7 @@ ExtractAndSaveGraph <-
     # The line numbers start from 0, and not all line numbers may be represented in the kanji. 
     # If the line number is not in the kanji the index in the vector maps to -1
     lookup.vector <- matrix(data = -1, nrow = max(included.lines))
+    lookup.vector <- matrix(data = -1, nrow = max(included.lines))
     lookup.vector[included.lines + 1] <- seq(1:length(included.lines))
     
     rows.in.adjacency.matrix <- lookup.vector[lines.in.kanji[, 7] + 1]
@@ -40,6 +41,16 @@ ExtractAndSaveGraph <-
     kanji.graph <- graph_from_adjacency_matrix(adjacency.matrix)
     
     stopifnot(length(rows.in.adjacency.matrix) == length(corner.labels))
+    
+    vertex_attr(kanji.graph, 'lineNumber') <- which(lookup.vector != -1) - 1
+    
+    # for(i in 1:length(lookup.vector)) {
+    #   if(lookup.vector[i] == -1) {
+    #     next
+    #   }
+    #   V(kanji.graph)$line.number[i] <- lookup.vector[i]
+    # }
+    
     
     # Iterate over each from-to pair defined by rows.in.adjacency.matrix 
     # and columns.in.adjacency.matrix. These are in turn made from lines.in.kanji 

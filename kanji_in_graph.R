@@ -12,7 +12,7 @@ sapply(kanjis.in.set, function(kanji.code) {
   lines.in.kanji <- filtered.lines[which(filtered.lines[ , 6] == kanji.code), ]
   corner.labels <- filtered.matrix.kms$label[which(filtered.lines[ , 6] == kanji.code)]
   
-  ExtractAndSaveGraph(kanji.code, lines.in.kanji, corner.labels, paste('/home/student/workspace/kanjiR/kanji_graphs/', kanji.code, '.xml', sep=''))
+  ExtractAndSaveGraph(kanji.code, lines.in.kanji, corner.labels, paste('/home/student/workspace/kanjiR/kanji_graphs3/', kanji.code, '.xml', sep=''))
 })
 
 
@@ -21,4 +21,4 @@ sapply(kanjis.in.set, function(kanji.code) {
 lines.in.kanji2 <- filtered.lines[which(filtered.lines[ , 6] == 26613), ]
 corner.labels2 <- filtered.matrix.kms$label[which(filtered.lines[ , 6] == 26613)]
 
-ExtractAndSaveGraph(kanji.code, lines.in.kanji2, corner.labels2, paste('/home/student/workspace/kanjiR/test_kanji', kanji.code, '.xml', sep=''))
+ExtractAndSaveGraph(26613, lines.in.kanji2, corner.labels2, paste('/home/student/workspace/kanjiR/test_kanji', 26613, '.xml', sep=''))
