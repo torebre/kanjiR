@@ -22,3 +22,5 @@ lines.in.kanji2 <- filtered.lines[which(filtered.lines[ , 6] == 26613), ]
 corner.labels2 <- filtered.matrix.kms$label[which(filtered.lines[ , 6] == 26613)]
 
 ExtractAndSaveGraph(26613, lines.in.kanji2, corner.labels2, paste('/home/student/workspace/kanjiR/test_kanji', 26613, '.xml', sep=''))
+
+DrawHighlightedLines(34276, kanji.line.data[which(kanji.line.data$unicode == 34276) ,], c(0, 5))
