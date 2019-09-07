@@ -6,7 +6,6 @@ source('DrawLineKanji.R')
 source("ExtractClosestLines2.R")
 source("ExtractRelativePositions.R")
 source("ExtractClosestLinesToLine2.R")
-source('DrawHighlightedLines.R')
 source("DrawLineRelative.R")
 source("GenerateLineHeatMap.R")
 
