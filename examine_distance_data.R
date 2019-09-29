@@ -1,47 +1,24 @@
 library(MASS)
+library(splitstackshape)
+
 source('DrawHighlightedLines.R')
+
 
 distance.data <- read.csv("/home/student/workspace/testEncodings/sub_image_distances.csv", stringsAsFactors = F)
 
 hist(distance.data[ , 2])
 
 sort.order <- order(distance.data[, 2])
-
 distance.data.sorted <- distance.data[sort.order, ]
-distance.data.sorted[1:10, ]
 
 truehist(distance.data[ , 2])
-
-
 
 segments.file.name <- '/home/student/workspace/testEncodings/kanji_data_segments.csv'
 kanji.segments.data <- read.table(segments.file.name, header = T, sep = ",")
 
-kanji.segments.data[1:100, ]
-
-
-
-# 35114-33897-137_21-53_51    14
-kanji1 <- kanji.segments.data[ , 1]
-
-kanji.subimages.all.lines <- which(kanji.segments.data$unicode == 35114)
-kanji.subimages.all.lines2 <- which(kanji.segments.data$unicode == 33897)
-
-kanji.segments.data[kanji.subimages.all.lines[1:10] , ]
-
-kanji.subimage <- which(kanji.segments.data$unicode == 35114 & kanji.segments.data$segment == 9)
-kanji.subimage2 <- which(kanji.segments.data$unicode == 33897 & kanji.segments.data$segment == 35)
-
-kanji.subimage.linedata <- kanji.segments.data[kanji.subimage, ]
-kanji.subimage.linedata2 <- kanji.segments.data[kanji.subimage2, ]
-
-DrawHighlightedLines(35114, kanji.subimage.linedata)
-DrawHighlightedLines(33897, kanji.subimage.linedata2)
-
-
-library(splitstackshape)
-#install.packages("splitstackshape")
-
+# Split the first column, which is a string with unicode numbers and which sub images 
+# in the kanji that are involved, into four columns. Two for the unicodes and two 
+# for the sub image numbers
 test.read <- concat.split(data = distance.data.sorted, split.col = 1, sep = "-", drop = T)
 
 distance.data.sorted[1, ]
@@ -94,3 +71,18 @@ start_time <- Sys.time()
 kanji.segments.data$unicode == test.read[1, 2][[1]]
 end_time <- Sys.time()
 end_time - start_time
+
+# 4014556     35114-33897-9-33     44
+
+DrawHighlightedLines(35114, kanji.segments.data[intersect(which(kanji.segments.data[ , 1] == 35114), which(kanji.segments.data[ , 7] == 9)), ])
+DrawHighlightedLines(33897, kanji.segments.data[intersect(which(kanji.segments.data[ , 1] == 33897), which(kanji.segments.data[ , 7] == 39)), ])
+
+test.read[intersect(which(test.read[ , 2][[1]] == 35114) , which(test.read[ , 4][[1]] == 9)), ]
+          
+which(test.read[ , 2][[1]] == 35114)
+which(test.read[ , 4][[1]] == 9)
+
+which(test.read[ , 4] == 9) %in% which(test.read[ , 2] == 35114)
+
+distance.data.sorted[1:20, ]
+
