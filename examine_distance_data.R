@@ -86,3 +86,12 @@ which(test.read[ , 4] == 9) %in% which(test.read[ , 2] == 35114)
 
 distance.data.sorted[1:20, ]
 
+DrawHighlightedLines(34968, kanji.segments.data[intersect(which(kanji.segments.data[ , 1] == 34968), which(kanji.segments.data[ , 7] == 178)), ])
+DrawHighlightedLines(34851, kanji.segments.data[intersect(which(kanji.segments.data[ , 1] == 34851), which(kanji.segments.data[ , 7] == 560)), ])
+
+
+DrawHighlightedLines(33451, kanji.line.data)
+DrawHighlightedLines(27355, kanji.line.data)
+DrawHighlightedLines(35649, kanji.line.data)
+
+kanji.line.data[kanji.line.data[ , 1] == 35649, ]

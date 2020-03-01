@@ -55,7 +55,7 @@ ExtractAndSaveGraph <-
     # Iterate over each from-to pair defined by rows.in.adjacency.matrix 
     # and columns.in.adjacency.matrix. These are in turn made from lines.in.kanji 
     # and the first entry there corresponds to the first entry in corner.labels, the 
-    # second entry to the second endty in corner.labels and so on
+    # second entry to the second entry in corner.labels and so on
     for (i in 1:length(rows.in.adjacency.matrix)) {
       E(kanji.graph,
         c(rows.in.adjacency.matrix[i], columns.in.adjacency.matrix[i]))$category <-

@@ -67,7 +67,7 @@ for(i in 1:1000) { #length(kanji.unicodes)) {
 }
 
 filtered.lines <- lines[which(!is.na(lines[ , 1])) ,]
-filtered.matrix <-filtered.lines[, 1:3]
+filtered.matrix <- filtered.lines[, 1:3]
 # filtered.matrix.normalized <- apply(filtered.matrix[ , 1:3], 2, function(x) (x- min(x))/(max(x) - min(x)))
 
 op <- par(mfrow = c(4, 4))
