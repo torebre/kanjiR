@@ -1,4 +1,5 @@
 source('DrawLines.R')
+source('AddRectangle.R')
 
 number.of.rows <- 64
 number.of.columns <- 64
@@ -23,11 +24,17 @@ lines <- sapply(seq(1, 10), function(x) {
   c(angle, line.length, start.x, start.y, stop.x, stop.y)
 })
 
+lines <- rbind(t(lines), AddRectangle(number.of.rows, number.of.columns))
 
-lines <- t(lines)
-
-line.matrices <- sapply(seq(1, 10), function(x) {
-  return(CreateLine(lines[x, 3], lines[x, 4], lines[x, 5], lines[x, 6]))
+line.matrices <- apply(lines, 1, function(x) {
+  return(CreateLine(x[3], x[4], x[5], x[6]))
 })
 
 DrawLines(line.matrices)
+
+
+# test.line <- AddRectangle(number.of.rows, number.of.columns)
+# test.line.matrices <- apply(test.line, 1, function(x) {
+#   return(CreateLine(x[3], x[4], x[5], x[6]))
+# })
+# DrawLines(test.line.matrices)
