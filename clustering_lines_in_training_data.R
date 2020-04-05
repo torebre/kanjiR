@@ -72,14 +72,6 @@ filtered.lines <- lines[which(!is.na(lines[ , 1])) ,]
 filtered.matrix <- filtered.lines[, 1:3]
 # filtered.matrix.normalized <- apply(filtered.matrix[ , 1:3], 2, function(x) (x- min(x))/(max(x) - min(x)))
 
-op <- par(mfrow = c(4, 4))
-for(i in 1:16) {
-  DrawHighlightedLines(filtered.lines[i, 6], kanji.line.data[which(kanji.line.data == filtered.lines[i, 6]) ,], filtered.lines[i, 7:8])
-}
-par(op)
-
-
-
 
 BIC <- mclustBIC(filtered.matrix[ , 1:3])
 plot(BIC)
