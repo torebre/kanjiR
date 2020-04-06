@@ -9,7 +9,7 @@ ExtractAndSaveGraph <-
     #   kanji.code: Unicode used to identify the kanji
     #   lines.in.kanji: Information about the lines in the kanji. This is a matrix as output by ExtractRelativePositions
     #   corner.labels: A vector with information about which cluster the relation between two lines belong to
-    #   output.file: File to write the data to. The is in the form of a graph ML document
+    #   output.file: File to write the data to. The output is in the form of a graph ML document
     included.lines <-
       sort(unique(c(lines.in.kanji[, 7], lines.in.kanji[, 8])))
     

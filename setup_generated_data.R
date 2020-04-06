@@ -54,6 +54,9 @@ training.data <- lapply(1:100, function(x) {
   transformed.sample
 })
 
-training.data
+training.data.transformed <- do.call(rbind, lapply(training.data, function(x) {
+  x
+}))
 
-training.data[[1]]$start.x
+training.data.unlisted[1:20, ]
+write.csv(training.data.transformed, "training_data.csv", row.names = F)
