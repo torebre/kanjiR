@@ -52,12 +52,12 @@ training.data.transformed <- do.call(rbind, lapply(training.data, function(x) {
 training.data.unlisted[1:20, ]
 
 test.line.matrices <- apply(training.data[[1]], 1, function(x) {
-  stop.x <- x[5] + round(x[4] * sin(x[3]))
-  stop.y <- x[6] + round(x[4] * cos(x[3]))
+  stop.x <- x[5] + round(x[4] * cos(x[3]))
+  stop.y <- x[6] + round(x[4] * sin(x[3]))
   
   print(paste(x[6], x[5], stop.y, stop.x))
   
-  return(CreateLine(x[5], x[6], stop.x, stop.y))
+  return(CreateLine(x[6], x[5], stop.y, stop.x))
 })
 
 
