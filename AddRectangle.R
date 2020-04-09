@@ -8,7 +8,7 @@ AddRectangle <- function(number.of.rows, number.of.columns) {
   line.length.y <- sample(available.space.y, 1)
   
   rbind(c(0, line.length, start.x, start.y, start.x + line.length, start.y),
-  c(7/4 * pi, line.length.y, start.x, start.y, start.x, start.y + line.length.y),
-  c(0, line.length, start.x, start.y  + line.length.y, start.x + line.length, start.y + line.length.y),
-  c(1/2 * pi, line.length.y, start.x + line.length, start.y  + line.length.y, start.x + line.length, start.y))
+  c(1/2 * pi, line.length.y, start.x, start.y, start.x, start.y + line.length.y),
+  c(0, line.length, start.x, start.y + line.length.y, start.x + line.length, start.y + line.length.y),
+  c(3/2 * pi, line.length.y, start.x + line.length, start.y  + line.length.y, start.x + line.length, start.y))
 }

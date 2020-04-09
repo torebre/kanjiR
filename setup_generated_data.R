@@ -32,15 +32,6 @@ CreateMatrixLines <- function() {
   })
 }
 
-DrawLines(line.matrices)
-
-
-# test.line <- AddRectangle(number.of.rows, number.of.columns)
-# test.line.matrices <- apply(test.line, 1, function(x) {
-#   return(CreateLine(x[3], x[4], x[5], x[6]))
-# })
-# DrawLines(test.line.matrices)
-
 training.data <- lapply(1:100, function(x) {
   index <- x
   training.sample <- GenerateTrainingSample()
@@ -59,4 +50,22 @@ training.data.transformed <- do.call(rbind, lapply(training.data, function(x) {
 }))
 
 training.data.unlisted[1:20, ]
+
+test.line.matrices <- apply(training.data[[1]], 1, function(x) {
+  stop.x <- x[5] + round(x[4] * sin(x[3]))
+  stop.y <- x[6] + round(x[4] * cos(x[3]))
+  
+  print(paste(x[6], x[5], stop.y, stop.x))
+  
+  return(CreateLine(x[5], x[6], stop.x, stop.y))
+})
+
+
+training.data[[1]][11:14, ]
+DrawLines(test.line.matrices[11:14])
+DrawLines(test.line.matrices)
+
+training.data[[1]][14, ]
+
+
 write.csv(training.data.transformed, "training_data.csv", row.names = F)
